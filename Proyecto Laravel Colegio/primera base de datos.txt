@@ -1,1 +1,765 @@
-hola mundo 
+CREATE DATABASE sistema_escolar1;
+USE sistema_escolar1;
+
+
+---normalizada 3
+
+-- Índices para optimización
+CREATE INDEX idx_alumno_documento ON alumno(numero_documento);
+CREATE INDEX idx_profesor_documento ON profesor(numero_documento);
+CREATE INDEX idx_nota_fecha ON nota(fecha_evaluacion);
+CREATE INDEX idx_asistencia_fecha ON asistencia(fecha);
+CREATE INDEX idx_reserva_fecha ON reserva(fecha_reserva);
+
+-- Tabla de configuración del año escolar
+CREATE TABLE anio_escolar (
+    id_anio INT PRIMARY KEY IDENTITY(1,1),
+    anio INT NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    estado VARCHAR(20) DEFAULT 'activo',
+    fecha_registro DATETIME DEFAULT GETDATE(),
+    CONSTRAINT chk_fechas_anio CHECK (fecha_inicio < fecha_fin)
+);
+
+-- Tabla de bimestres
+CREATE TABLE bimestre (
+    id_bimestre INT PRIMARY KEY IDENTITY(1,1),
+    nombre_bimestre VARCHAR(50) NOT NULL,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    id_anio INT,
+    estado VARCHAR(20) DEFAULT 'activo',
+    FOREIGN KEY (id_anio) REFERENCES anio_escolar(id_anio),
+    CONSTRAINT chk_fechas_bimestre CHECK (fecha_inicio < fecha_fin)
+);
+
+-- Tabla de grados
+CREATE TABLE grado (
+    id_grado INT PRIMARY KEY IDENTITY(1,1),
+    nombre_grado VARCHAR(50) NOT NULL,
+    nivel VARCHAR(20) NOT NULL, -- primaria, secundaria, etc.
+    estado VARCHAR(20) DEFAULT 'activo',
+    CONSTRAINT chk_nivel CHECK (nivel IN ('primaria', 'secundaria'))
+);
+
+-- Tabla de secciones
+CREATE TABLE seccion (
+    id_seccion INT PRIMARY KEY IDENTITY(1,1),
+    nombre_seccion VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255),
+    id_grado INT,
+    capacidad_maxima INT DEFAULT 30,
+    estado VARCHAR(20) DEFAULT 'activo',
+    FOREIGN KEY (id_grado) REFERENCES grado(id_grado)
+);
+
+-- Tabla de apoderados
+CREATE TABLE apoderado (
+    id_apoderado INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    tipo_documento VARCHAR(20) DEFAULT 'DNI',
+    numero_documento VARCHAR(20) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    telefono_emergencia VARCHAR(20),
+    direccion VARCHAR(100),
+    email VARCHAR(100),
+    estado VARCHAR(20) DEFAULT 'activo',
+    fecha_registro DATETIME DEFAULT GETDATE()
+);
+
+-- Tabla de alumnos
+CREATE TABLE alumno (
+    id_alumno INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    tipo_documento VARCHAR(20) DEFAULT 'DNI',
+    numero_documento VARCHAR(20) UNIQUE NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    genero CHAR(1),
+    direccion VARCHAR(100),
+    id_apoderado INT,
+    id_seccion INT,
+    id_grado INT,
+    estado VARCHAR(20) DEFAULT 'activo',
+    fecha_registro DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_apoderado) REFERENCES apoderado(id_apoderado),
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion),
+    FOREIGN KEY (id_grado) REFERENCES grado(id_grado)
+);
+
+-- Tabla de especialidades
+CREATE TABLE especialidad (
+    id_especialidad INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    estado VARCHAR(20) DEFAULT 'activo'
+);
+
+-- Tabla de profesores
+CREATE TABLE profesor (
+    id_profesor INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    tipo_documento VARCHAR(20) DEFAULT 'DNI',
+    numero_documento VARCHAR(20) UNIQUE NOT NULL,
+    id_especialidad INT,
+    email VARCHAR(100),
+    telefono VARCHAR(20),
+    tipo VARCHAR(20), -- titular, contratado, etc.
+    fecha_ingreso DATE,
+    estado VARCHAR(20) DEFAULT 'activo',
+    fecha_registro DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_especialidad) REFERENCES especialidad(id_especialidad)
+);
+
+-- Tabla de cursos
+CREATE TABLE curso (
+    id_curso INT PRIMARY KEY IDENTITY(1,1),
+    codigo_curso VARCHAR(20) UNIQUE NOT NULL,
+    nombre_curso VARCHAR(50) NOT NULL,
+    tipo_curso VARCHAR(20), -- obligatorio, electivo, etc.
+    descripcion VARCHAR(255),
+    id_grado INT,
+    horas_semanales INT,
+    creditos INT,
+    estado VARCHAR(20) DEFAULT 'activo',
+    FOREIGN KEY (id_grado) REFERENCES grado(id_grado)
+);
+
+-- Tabla de relación profesor-curso
+CREATE TABLE profesor_curso (
+    id_profesor_curso INT PRIMARY KEY IDENTITY(1,1),
+    id_profesor INT,
+    id_curso INT,
+    id_anio INT,
+    fecha_asignacion DATETIME DEFAULT GETDATE(),
+    estado VARCHAR(20) DEFAULT 'activo',
+    FOREIGN KEY (id_profesor) REFERENCES profesor(id_profesor),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (id_anio) REFERENCES anio_escolar(id_anio)
+);
+
+-- Tabla de horarios
+CREATE TABLE horario (
+    id_horario INT PRIMARY KEY IDENTITY(1,1),
+    id_profesor_curso INT,
+    id_seccion INT,
+    dia_semana VARCHAR(20),
+    hora_inicio TIME,
+    hora_fin TIME,
+    aula VARCHAR(20),
+    estado VARCHAR(20) DEFAULT 'activo',
+    FOREIGN KEY (id_profesor_curso) REFERENCES profesor_curso(id_profesor_curso),
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+);
+
+-- Tabla de tipos de evaluación
+CREATE TABLE tipo_evaluacion (
+    id_tipo_evaluacion INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255),
+    peso DECIMAL(5,2),
+    estado VARCHAR(20) DEFAULT 'activo'
+);
+
+-- Tabla de notas
+CREATE TABLE nota (
+    id_nota INT PRIMARY KEY IDENTITY(1,1),
+    id_alumno INT,
+    id_curso INT,
+    id_profesor INT,
+    id_bimestre INT,
+    id_tipo_evaluacion INT,
+    nota DECIMAL(5,2),
+    fecha_evaluacion DATE,
+    observaciones TEXT,
+    estado VARCHAR(20) DEFAULT 'activo',
+    fecha_registro DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_alumno) REFERENCES alumno(id_alumno),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (id_profesor) REFERENCES profesor(id_profesor),
+    FOREIGN KEY (id_bimestre) REFERENCES bimestre(id_bimestre),
+    FOREIGN KEY (id_tipo_evaluacion) REFERENCES tipo_evaluacion(id_tipo_evaluacion),
+    CONSTRAINT chk_nota CHECK (nota >= 0 AND nota <= 20)
+);
+
+-- Tabla de asistencias
+CREATE TABLE asistencia (
+    id_asistencia INT PRIMARY KEY IDENTITY(1,1),
+    id_alumno INT,
+    id_curso INT,
+    fecha DATE,
+    estado_asistencia VARCHAR(20), -- presente, tardanza, falta, justificado
+    observaciones TEXT,
+    registrado_por INT,
+    fecha_registro DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_alumno) REFERENCES alumno(id_alumno),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (registrado_por) REFERENCES profesor(id_profesor)
+);
+
+-- Tabla de áreas
+CREATE TABLE area (
+    id_area INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50), -- académica, deportiva, etc.
+    capacidad INT,
+    ubicacion VARCHAR(100),
+    estado VARCHAR(20) DEFAULT 'activo'
+);
+
+-- Tabla de responsables de área
+CREATE TABLE responsable_area (
+    id_responsable INT PRIMARY KEY IDENTITY(1,1),
+    id_area INT,
+    id_profesor INT,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    estado VARCHAR(20) DEFAULT 'activo',
+    FOREIGN KEY (id_area) REFERENCES area(id_area),
+    FOREIGN KEY (id_profesor) REFERENCES profesor(id_profesor)
+);
+
+-- Tabla de reservas
+CREATE TABLE reserva (
+    id_reserva INT PRIMARY KEY IDENTITY(1,1),
+    id_area INT,
+    id_profesor INT,
+    fecha_reserva DATE,
+    hora_inicio TIME,
+    hora_fin TIME,
+    motivo VARCHAR(255),
+    estado VARCHAR(20) DEFAULT 'pendiente',
+    fecha_registro DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (id_area) REFERENCES area(id_area),
+    FOREIGN KEY (id_profesor) REFERENCES profesor(id_profesor)
+);
+
+-- Tabla de roles
+CREATE TABLE rol (
+    id_rol INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255),
+    estado VARCHAR(20) DEFAULT 'activo'
+);
+
+-- Tabla de permisos
+CREATE TABLE permiso (
+    id_permiso INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL,
+    codigo VARCHAR(50) UNIQUE,
+    descripcion VARCHAR(255),
+    estado VARCHAR(20) DEFAULT 'activo'
+);
+
+-- Tabla de relación rol-permiso
+CREATE TABLE rol_permiso (
+    id_rol_permiso INT PRIMARY KEY IDENTITY(1,1),
+    id_rol INT,
+    id_permiso INT,
+    FOREIGN KEY (id_rol) REFERENCES rol(id_rol),
+    FOREIGN KEY (id_permiso) REFERENCES permiso(id_permiso)
+);
+
+-- Tabla de relación alumno-curso (Inscripción de alumno en los cursos)
+CREATE TABLE alumno_curso (
+    id_alumno_curso INT PRIMARY KEY IDENTITY(1,1),
+    id_alumno INT,
+    id_curso INT,
+    id_seccion INT,
+    fecha_inscripcion DATETIME DEFAULT GETDATE(),
+    estado VARCHAR(20) DEFAULT 'activo',
+    FOREIGN KEY (id_alumno) REFERENCES alumno(id_alumno),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+);
+
+
+-- Insertar datos en la tabla anio_escolar
+INSERT INTO anio_escolar (anio, fecha_inicio, fecha_fin, estado)
+VALUES 
+(2024, '2024-03-01', '2024-12-31', 'activo'),
+(2025, '2025-03-01', '2025-12-31', 'activo');
+
+-- Insertar datos en la tabla bimestre
+INSERT INTO bimestre (nombre_bimestre, fecha_inicio, fecha_fin, id_anio)
+VALUES
+('Primer Bimestre', '2024-03-01', '2024-05-31', 1),
+('Segundo Bimestre', '2024-06-01', '2024-08-31', 1),
+('Tercer Bimestre', '2024-09-01', '2024-11-30', 1);
+
+-- Insertar datos en la tabla grado
+INSERT INTO grado (nombre_grado, nivel, estado)
+VALUES 
+('Primer Grado', 'primaria', 'activo'),
+('Segundo Grado', 'primaria', 'activo'),
+('Tercer Grado', 'secundaria', 'activo');
+
+-- Insertar datos en la tabla seccion
+INSERT INTO seccion (nombre_seccion, descripcion, id_grado, capacidad_maxima, estado)
+VALUES
+('A', 'Sección A de primer grado', 1, 30, 'activo'),
+('B', 'Sección B de segundo grado', 2, 30, 'activo');
+
+-- Insertar datos en la tabla apoderado
+INSERT INTO apoderado (nombre, apellido, tipo_documento, numero_documento, telefono, direccion, email, estado)
+VALUES
+('Carlos', 'Pérez', 'DNI', '12345678', '987654321', 'Av. Libertad 123', 'carlos@email.com', 'activo'),
+('Ana', 'Martínez', 'DNI', '23456789', '987654322', 'Av. Perú 456', 'ana@email.com', 'activo');
+
+-- Insertar datos en la tabla alumno
+INSERT INTO alumno (nombre, apellido, tipo_documento, numero_documento, fecha_nacimiento, genero, direccion, id_apoderado, id_seccion, id_grado, estado)
+VALUES
+('Juan', 'Pérez', 'DNI', '12345678', '2010-05-10', 'M', 'Av. Libertad 123', 1, 1, 1, 'activo'),
+('María', 'Martínez', 'DNI', '23456789', '2009-07-15', 'F', 'Av. Perú 456', 2, 2, 2, 'activo');
+
+-- Insertar datos en la tabla especialidad
+INSERT INTO especialidad (nombre, descripcion, estado)
+VALUES
+('Matemáticas', 'Especialidad en matemáticas', 'activo'),
+('Lengua', 'Especialidad en lengua y literatura', 'activo');
+
+-- Insertar datos en la tabla profesor
+INSERT INTO profesor (nombre, apellido, tipo_documento, numero_documento, id_especialidad, email, telefono, tipo, fecha_ingreso, estado)
+VALUES
+('Pedro', 'Gómez', 'DNI', '34567890', 1, 'pedro@email.com', '987654323', 'titular', '2015-01-15', 'activo'),
+('Laura', 'Rodríguez', 'DNI', '45678901', 2, 'laura@email.com', '987654324', 'contratado', '2020-03-10', 'activo');
+
+-- Insertar datos en la tabla curso
+INSERT INTO curso (codigo_curso, nombre_curso, tipo_curso, descripcion, id_grado, horas_semanales, creditos, estado)
+VALUES
+('MATH101', 'Matemáticas I', 'obligatorio', 'Curso de matemáticas básico', 1, 4, 3, 'activo'),
+('LENG101', 'Lengua y Literatura I', 'obligatorio', 'Curso de lengua y literatura básico', 1, 4, 3, 'activo');
+
+-- Insertar datos en la tabla profesor_curso
+INSERT INTO profesor_curso (id_profesor, id_curso, id_anio, fecha_asignacion, estado)
+VALUES
+(1, 1, 1, '2024-03-01', 'activo'),
+(2, 2, 1, '2024-03-01', 'activo');
+
+-- Insertar datos en la tabla horario
+INSERT INTO horario (id_profesor_curso, id_seccion, dia_semana, hora_inicio, hora_fin, aula, estado)
+VALUES
+(1, 1, 'Lunes', '08:00', '09:30', 'A1', 'activo'),
+(2, 2, 'Martes', '10:00', '11:30', 'B2', 'activo');
+
+-- Insertar datos en la tabla tipo_evaluacion
+INSERT INTO tipo_evaluacion (nombre, descripcion, peso, estado)
+VALUES
+('Examen', 'Examen final del bimestre', 40.00, 'activo'),
+('Tarea', 'Trabajo realizado en clase', 30.00, 'activo');
+
+-- Insertar datos en la tabla nota
+INSERT INTO nota (id_alumno, id_curso, id_profesor, id_bimestre, id_tipo_evaluacion, nota, fecha_evaluacion, observaciones, estado)
+VALUES
+(1, 1, 1, 1, 1, 18.50, '2024-05-30', 'Buen desempeño', 'activo'),
+(2, 2, 2, 2, 2, 15.00, '2024-08-30', 'Mejorar en la escritura', 'activo');
+
+-- Insertar datos en la tabla asistencia
+INSERT INTO asistencia (id_alumno, id_curso, fecha, estado_asistencia, observaciones, registrado_por, fecha_registro)
+VALUES
+(1, 1, '2024-03-10', 'presente', '', 1, '2024-03-10'),
+(2, 2, '2024-03-10', 'falta', 'No justificó su falta', 2, '2024-03-10');
+
+-- Insertar datos en la tabla area
+INSERT INTO area (nombre, tipo, capacidad, ubicacion, estado)
+VALUES
+('Aula 101', 'académica', 30, 'Edificio A, Primer Piso', 'activo'),
+('Aula 102', 'académica', 30, 'Edificio A, Segundo Piso', 'activo');
+
+-- Insertar datos en la tabla responsable_area
+INSERT INTO responsable_area (id_area, id_profesor, fecha_inicio, fecha_fin, estado)
+VALUES
+(1, 1, '2024-03-01', '2024-12-31', 'activo'),
+(2, 2, '2024-03-01', '2024-12-31', 'activo');
+
+-- Insertar datos en la tabla reserva
+INSERT INTO reserva (id_area, id_profesor, fecha_reserva, hora_inicio, hora_fin, motivo, estado, fecha_registro)
+VALUES
+(1, 1, '2024-05-15', '14:00', '15:30', 'Reunión de trabajo', 'pendiente', '2024-05-10'),
+(2, 2, '2024-05-16', '10:00', '12:00', 'Clase de repaso', 'pendiente', '2024-05-10');
+
+-- Insertar datos en la tabla rol
+INSERT INTO rol (nombre, descripcion, estado)
+VALUES
+('Administrador', 'Administrador del sistema', 'activo'),
+('Profesor', 'Profesor del curso', 'activo');
+
+-- Insertar datos en la tabla permiso
+INSERT INTO permiso (nombre, codigo, descripcion, estado)
+VALUES
+('Acceder a reportes', 'ACC_REPORTES', 'Permiso para acceder a los reportes académicos', 'activo'),
+('Editar notas', 'EDIT_NOTAS', 'Permiso para editar las notas de los estudiantes', 'activo');
+
+-- Insertar datos en la tabla rol_permiso
+INSERT INTO rol_permiso (id_rol, id_permiso)
+VALUES
+(1, 1),
+(2, 2);
+
+-- Insertar datos en la tabla alumno_curso
+INSERT INTO alumno_curso (id_alumno, id_curso, id_seccion, fecha_inscripcion, estado)
+VALUES
+(1, 1, 1, '2024-03-01', 'activo'),
+(2, 2, 2, '2024-03-01', 'activo');
+
+-- Índices para optimización
+CREATE INDEX idx_alumno_documento ON alumno(numero_documento);
+CREATE INDEX idx_profesor_documento ON profesor(numero_documento);
+CREATE INDEX idx_nota_fecha ON nota(fecha_evaluacion);
+CREATE INDEX idx_asistencia_fecha ON asistencia(fecha);
+CREATE INDEX idx_reserva_fecha ON reserva(fecha_reserva);
+
+
+
+-- Procedimiento para obtener las notas de un alumno
+CREATE PROCEDURE obtener_notas_alumno(
+    @id_alumno INT
+)
+AS
+BEGIN
+    SELECT 
+        a.nombre AS Alumno,
+        c.nombre_curso AS Curso,
+        t.nombre AS TipoEvaluacion,
+        n.nota AS Nota,
+        b.nombre_bimestre AS Bimestre,
+        n.fecha_evaluacion AS Fecha
+    FROM 
+        nota n
+    INNER JOIN alumno a ON n.id_alumno = a.id_alumno
+    INNER JOIN curso c ON n.id_curso = c.id_curso
+    INNER JOIN tipo_evaluacion t ON n.id_tipo_evaluacion = t.id_tipo_evaluacion
+    INNER JOIN bimestre b ON n.id_bimestre = b.id_bimestre
+    WHERE 
+        a.id_alumno = @id_alumno
+    ORDER BY 
+        b.fecha_inicio DESC;
+END;
+
+-- Procedimiento para obtener las asistencias de un alumno
+CREATE PROCEDURE obtener_asistencias_alumno(
+    @id_alumno INT
+)
+AS
+BEGIN
+    SELECT 
+        a.nombre AS Alumno,
+        c.nombre_curso AS Curso,
+        asis.fecha AS Fecha,
+        asis.estado_asistencia AS Estado,
+        asis.observaciones AS Observaciones
+    FROM 
+        asistencia asis
+    INNER JOIN alumno a ON asis.id_alumno = a.id_alumno
+    INNER JOIN curso c ON asis.id_curso = c.id_curso
+    WHERE 
+        a.id_alumno = @id_alumno
+    ORDER BY 
+        asis.fecha DESC;
+END;
+
+
+-- Vista para obtener información del año escolar
+CREATE VIEW vw_anio_escolar AS
+SELECT 
+    id_anio,
+    anio,
+    fecha_inicio,
+    fecha_fin,
+    estado,
+    fecha_registro
+FROM anio_escolar;
+
+-- Vista para obtener la información de los bimestres y su relación con el año escolar
+CREATE VIEW vw_bimestres AS
+SELECT 
+    b.id_bimestre,
+    b.nombre_bimestre,
+    b.fecha_inicio,
+    b.fecha_fin,
+    b.id_anio,
+    a.anio AS anio_escolar,
+    b.estado
+FROM bimestre b
+JOIN anio_escolar a ON b.id_anio = a.id_anio;
+
+-- Vista para obtener la información de los grados
+CREATE VIEW vw_grados AS
+SELECT 
+    id_grado,
+    nombre_grado,
+    nivel,
+    estado
+FROM grado;
+
+-- Vista para obtener la información de las secciones de los grados
+CREATE VIEW vw_secciones AS
+SELECT 
+    s.id_seccion,
+    s.nombre_seccion,
+    s.descripcion,
+    s.id_grado,
+    g.nombre_grado,
+    s.capacidad_maxima,
+    s.estado
+FROM seccion s
+JOIN grado g ON s.id_grado = g.id_grado;
+
+-- Vista para obtener la información de los apoderados
+CREATE VIEW vw_apoderados AS
+SELECT 
+    id_apoderado,
+    nombre,
+    apellido,
+    tipo_documento,
+    numero_documento,
+    telefono,
+    telefono_emergencia,
+    direccion,
+    email,
+    estado,
+    fecha_registro
+FROM apoderado;
+
+-- Vista para obtener la información de los alumnos y su relación con los apoderados y secciones
+CREATE VIEW vw_alumnos AS
+SELECT 
+    a.id_alumno,
+    a.nombre,
+    a.apellido,
+    a.tipo_documento,
+    a.numero_documento,
+    a.fecha_nacimiento,
+    a.genero,
+    a.direccion,
+    ap.nombre AS apoderado_nombre,
+    ap.apellido AS apoderado_apellido,
+    s.nombre_seccion,
+    g.nombre_grado,
+    a.estado,
+    a.fecha_registro
+FROM alumno a
+JOIN apoderado ap ON a.id_apoderado = ap.id_apoderado
+JOIN seccion s ON a.id_seccion = s.id_seccion
+JOIN grado g ON a.id_grado = g.id_grado;
+
+
+-- Vista para obtener la información de las especialidades
+CREATE VIEW vw_especialidades AS
+SELECT 
+    id_especialidad,
+    nombre,
+    descripcion,
+    estado
+FROM especialidad;
+
+-- Vista para obtener la información de los profesores y su especialidad
+CREATE VIEW vw_profesores AS
+SELECT 
+    p.id_profesor,
+    p.nombre,
+    p.apellido,
+    p.tipo_documento,
+    p.numero_documento,
+    e.nombre AS especialidad_nombre,
+    p.email,
+    p.telefono,
+    p.tipo,
+    p.fecha_ingreso,
+    p.estado,
+    p.fecha_registro
+FROM profesor p
+JOIN especialidad e ON p.id_especialidad = e.id_especialidad;
+
+-- Vista para obtener la información de los cursos por grado
+CREATE VIEW vw_cursos AS
+SELECT 
+    c.id_curso,
+    c.codigo_curso,
+    c.nombre_curso,
+    c.tipo_curso,
+    c.descripcion,
+    g.nombre_grado,
+    c.horas_semanales,
+    c.creditos,
+    c.estado
+FROM curso c
+JOIN grado g ON c.id_grado = g.id_grado;
+
+-- Vista para obtener la asignación de profesores a cursos
+CREATE VIEW vw_profesor_curso AS
+SELECT 
+    pc.id_profesor_curso,
+    p.nombre AS profesor_nombre,
+    p.apellido AS profesor_apellido,
+    c.nombre_curso,
+    a.anio AS anio_escolar,
+    pc.fecha_asignacion,
+    pc.estado
+FROM profesor_curso pc
+JOIN profesor p ON pc.id_profesor = p.id_profesor
+JOIN curso c ON pc.id_curso = c.id_curso
+JOIN anio_escolar a ON pc.id_anio = a.id_anio;
+
+-- Vista para obtener la información de los horarios de clases
+CREATE VIEW vw_horarios AS
+SELECT 
+    h.id_horario,
+    p.nombre AS profesor_nombre,
+    p.apellido AS profesor_apellido,
+    s.nombre_seccion,
+    h.dia_semana,
+    h.hora_inicio,
+    h.hora_fin,
+    h.aula,
+    h.estado
+FROM horario h
+JOIN profesor_curso pc ON h.id_profesor_curso = pc.id_profesor_curso
+JOIN profesor p ON pc.id_profesor = p.id_profesor
+JOIN seccion s ON h.id_seccion = s.id_seccion;
+
+-- Vista para obtener la información de los tipos de evaluación
+CREATE VIEW vw_tipo_evaluacion AS
+SELECT 
+    id_tipo_evaluacion,
+    nombre,
+    descripcion,
+    peso,
+    estado
+FROM tipo_evaluacion;
+
+-- Vista para obtener las notas de los alumnos por curso, tipo de evaluación y bimestre
+CREATE VIEW vw_notas AS
+SELECT 
+    n.id_nota,
+    a.nombre AS alumno_nombre,
+    a.apellido AS alumno_apellido,
+    c.nombre_curso,
+    p.nombre AS profesor_nombre,
+    p.apellido AS profesor_apellido,
+    b.nombre_bimestre,
+    t.nombre AS tipo_evaluacion,
+    n.nota,
+    n.fecha_evaluacion,
+    n.observaciones,
+    n.estado
+FROM nota n
+JOIN alumno a ON n.id_alumno = a.id_alumno
+JOIN curso c ON n.id_curso = c.id_curso
+JOIN profesor p ON n.id_profesor = p.id_profesor
+JOIN bimestre b ON n.id_bimestre = b.id_bimestre
+JOIN tipo_evaluacion t ON n.id_tipo_evaluacion = t.id_tipo_evaluacion;
+
+-- Vista para obtener la asistencia de los alumnos sale error 
+CREATE VIEW vw_asistencias AS
+SELECT 
+    al.nombre AS alumno_nombre,
+    al.apellido AS alumno_apellido,
+    c.nombre_curso,
+    a.fecha,
+    a.estado_asistencia,
+    a.observaciones,
+    p.nombre AS profesor_nombre,
+    p.apellido AS profesor_apellido
+FROM asistencia a
+JOIN alumno al ON a.id_alumno = al.id_alumno
+JOIN curso c ON a.id_curso = c.id_curso
+JOIN profesor p ON a.registrado_por = p.id_profesor;
+
+-- Vista para obtener la información de las áreas
+CREATE VIEW vw_areas AS
+SELECT 
+    id_area,
+    nombre,
+    tipo,
+    capacidad,
+    ubicacion,
+    estado
+FROM area;
+
+-- Vista para obtener la información de los responsables de área
+CREATE VIEW vw_responsables_area AS
+SELECT 
+    ra.id_responsable,
+    a.nombre AS area_nombre,
+    p.nombre AS profesor_nombre,
+    p.apellido AS profesor_apellido,
+    ra.fecha_inicio,
+    ra.fecha_fin,
+    ra.estado
+FROM responsable_area ra
+JOIN area a ON ra.id_area = a.id_area
+JOIN profesor p ON ra.id_profesor = p.id_profesor;
+
+-- Vista para obtener la información de las reservas de áreas
+CREATE VIEW vw_reservas AS
+SELECT 
+    r.id_reserva,
+    a.nombre AS area_nombre,
+    p.nombre AS profesor_nombre,
+    p.apellido AS profesor_apellido,
+    r.fecha_reserva,
+    r.hora_inicio,
+    r.hora_fin,
+    r.motivo,
+    r.estado,
+    r.fecha_registro
+FROM reserva r
+JOIN area a ON r.id_area = a.id_area
+JOIN profesor p ON r.id_profesor = p.id_profesor;
+
+-- Vista para obtener la información de los roles
+CREATE VIEW vw_roles AS
+SELECT 
+    id_rol,
+    nombre,
+    descripcion,
+    estado
+FROM rol;
+
+-- Vista para obtener la información de los permisos
+CREATE VIEW vw_permisos AS
+SELECT 
+    id_permiso,
+    nombre,
+    codigo,
+    descripcion,
+    estado
+FROM permiso;
+
+-- Vista para obtener la relación entre roles y permisos
+CREATE VIEW vw_rol_permiso AS
+SELECT 
+    rp.id_rol_permiso,
+    r.nombre AS rol_nombre,
+    p.nombre AS permiso_nombre
+FROM rol_permiso rp
+JOIN rol r ON rp.id_rol = r.id_rol
+JOIN permiso p ON rp.id_permiso = p.id_permiso;
+
+-- Vista para obtener la relación entre alumnos y cursos
+CREATE VIEW vw_alumno_curso AS
+SELECT 
+    ac.id_alumno_curso,
+    a.nombre AS alumno_nombre,
+    a.apellido AS alumno_apellido,
+    c.nombre_curso,
+    s.nombre_seccion,
+    ac.fecha_inscripcion,
+    ac.estado
+FROM alumno_curso ac
+JOIN alumno a ON ac.id_alumno = a.id_alumno
+JOIN curso c ON ac.id_curso = c.id_curso
+JOIN seccion s ON ac.id_seccion = s.id_seccion;
+
+--comando para visualizar todos las vistas 
+SELECT 
+    TABLE_SCHEMA,
+    TABLE_NAME
+FROM 
+    INFORMATION_SCHEMA.VIEWS
+ORDER BY 
+    TABLE_SCHEMA, TABLE_NAME;
