@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'Colegio 7054',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+    'logo' => '<b>Colgio </b>7054',
+    'logo_img' => 'vendor/adminlte/dist/img/insig1.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'Colegio Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/insig1.png',
             'alt' => 'Auth Logo',
             'class' => '',
             'width' => 50,
@@ -113,7 +113,7 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/insig1.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -134,8 +134,8 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
-    'usermenu_header_class' => 'bg-primary',
+    'usermenu_header' => true,
+    'usermenu_header_class' => 'bg-purple',
     'usermenu_image' => false,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
@@ -264,27 +264,22 @@ return [
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
     'profile_url' => false,
-    'disable_darkmode_routes' => false,
 
     /*
     |--------------------------------------------------------------------------
-    | Laravel Asset Bundling
+    | Laravel Mix
     |--------------------------------------------------------------------------
     |
-    | Here we can enable the Laravel Asset Bundling option for the admin panel.
-    | Currently, the next modes are supported: 'mix', 'vite' and 'vite_js_only'.
-    | When using 'vite_js_only', it's expected that your CSS is imported using
-    | JavaScript. Typically, in your application's 'resources/js/app.js' file.
-    | If you are not using any of these, leave it as 'false'.
+    | Here we can enable the Laravel Mix option for the admin panel.
     |
-    | For detailed instructions you can look the asset bundling section here:
+    | For detailed instructions you can look the laravel mix section here:
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Other-Configuration
     |
     */
 
-    'laravel_asset_bundling' => false,
-    'laravel_css_path' => 'css/app.css',
-    'laravel_js_path' => 'js/app.js',
+    'enabled_laravel_mix' => false,
+    'laravel_mix_css_path' => 'css/app.css',
+    'laravel_mix_js_path' => 'js/app.js',
 
     /*
     |--------------------------------------------------------------------------
@@ -320,78 +315,376 @@ return [
             'url' => 'admin/blog',
             'can' => 'manage-blog',
         ],
+
+        ['header' => 'CONFIGURACIÓN DE LA CUENTA'],
         [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
+            'text' => 'perfil ',
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'change_password',
+            'text' => 'cambio de contraseña',
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
         ],
+        //apartado de los profesores
         [
-            'text' => 'multilevel',
+            'text' => 'paginas profesores  ',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
+
+                //capacitaciones
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'capacitaciones ',
+                    'submenu' => [
+                        [
+                            'text' => 'capacitacion actuales ',
+                            'url' => 'pagina_profesor/capacitacion/capaprofesor',
+                        ],
+                        [
+                            'text' => ' capacitaciones transcurridas  ',
+                            'url' => 'pagina_profesor/capacitacion/historialcapa',
+
+                        ]
+                    ],
                 ],
+                //capacitaciones en linea
                 [
-                    'text' => 'level_one',
+                    'text' => 'capacitaciones en vivo  ',
+                    'submenu' => [
+                        [
+                            'text' => 'capacitacion actual  ',
+                            'url' => 'pagina_profesor/capacitacion_en_vivo/envivoprofesor',
+                        ],
+                        [
+                            'text' => 'capacitacion grabada   ',
+                            'url' => 'pagina_profesor/capacitacion_en_vivo/grabadaprofesor',
+
+                        ],
+                    ],
+                ],
+                //horario de clases
+                [
+                    'text' => 'horario de las capacitaciones   ',
                     'url' => '#',
                     'submenu' => [
                         [
-                            'text' => 'level_two',
-                            'url' => '#',
+                            'text' => 'horario detallado   ',
+                            'url' => 'pagina_profesor/horario_de_capacitacion',
+                        ],
+
+                    ],
+                ],
+                //recursos academicos
+                [
+                    'text' => 'Recursos Academicos  ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Reserva de patios y laboratorios     ',
+                            'url' => 'pagina_profesor/recursos_academicos/reservadepatioylaoratorio',
                         ],
                         [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
+                            'text' => ' Reserva de libros  ',
+                            'url' => 'pagina_profesor/recursos_academicos/reservadelbrosymateriales',
+                        ],
+                        [
+                            'text' => ' Registro de incidencias  ',
+                            'url' => 'pagina_profesor/recursos_academicos/incidencia_aula',
+                        ],
+
+                    ],
+                ],
+                //resultados
+                [
+                    'text' => 'Notas del profesor  ',
+                    'submenu' => [
+                        [
+                            'text' => 'Notas de evaluacion Pedagogicas    ',
+                            'url' => 'pagina_profesor/notas_de_profesor/reporteugel',
+                        ],
+                        [
+                            'text' => ' Reporte evaluacion estudiantil ',
+                            'url' => 'pagina_profesor/notas_de_profesor/reportestudiantil',
+                        ],
+
+
+                    ],
+                ],
+
+            ],
+        ],
+        //apartado de los alumnos
+        [
+            'text' => 'paginas alumnos   ',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+
+                [
+                    'text' => 'cursos  ',
+                    'submenu' => [
+                        [
+                            'text' => 'cursos actuales ',
+                            //pagina estudiante  carpeta general y la subcarpeta capacitacion es la direccion de donde se obtine la vista
+                            'url' => 'pagina_estudiante/capacitacion/capacitacionactual',
+                        ],
+                        [
+                            'text' => ' cursos transcurridas  ',
+                            'url' => 'pagina_estudiante/capacitacion/transcur',
+
+                        ],
+                        [
+                            'text' => '  cursos autoinformativos  ',
+                            'url' => 'pagina_estudiante/capacitacion/auto',
+
                         ],
                     ],
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'cursos en vivo  ',
+                    'submenu' => [
+                        [
+                            'text' => 'clases actuales  ',
+                            'url' => 'pagina_estudiante/capacitacion_en_vivo/en_vivo',
+                        ],
+                        [
+                            'text' => 'clases guardadas    ',
+                            'url' => 'pagina_estudiante/capacitacion_en_vivo/grabadas',
+
+                        ],
+                    ],
                 ],
+                [
+                    'text' => 'horario escolar 2024  ',
+                    'submenu' => [
+                        [
+                            'text' => 'horario detallado   ',
+                            'url' => 'pagina_estudiante/horario_cursos',
+                        ],
+
+                    ],
+                ],
+                [
+                    'text' => 'Recursos estudiantiles   ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Reserva de talleres     ',
+                            'url' => 'pagina_estudiante/recursos_academicos/talleres',
+                        ],
+                        [
+                            'text' => ' Reserva de libros  ',
+                            'url' => 'pagina_estudiante/recursos_academicos/libros',
+                        ],
+                        [
+                            'text' => ' Registro de incidencias dentro del aula   ',
+                            'url' => 'pagina_estudiante/recursos_academicos/incidencias',
+                        ],
+
+                    ],
+                ],
+                [
+                    'text' => 'Notas del estudiante   ',
+                    'submenu' => [
+                        [
+                            'text' => 'Notas del bimestre      ',
+                            'url' => 'pagina_estudiante/notas_de_estudiante/bimestre',
+                        ],
+                        [
+                            'text' => ' Record academico ',
+                            'url' => 'pagina_estudiante/notas_de_estudiante/notas',
+                        ],
+                        [
+                            'text' => ' Notas actitudinal   ',
+                            'url' => 'pagina_estudiante/notas_de_estudiante/actitudinal',
+                        ],
+
+                    ],
+                ],
+
             ],
         ],
-        ['header' => 'labels'],
+        //apartado del director
         [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
+            'text' => 'paginas director   ',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+
+                [
+                    'text' => 'Gestion Academica ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Planificación de cursos ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => ' Control de calificaciones  ',
+                            'url' => '#',
+
+                        ],
+                        [
+                            'text' => '  Asignación de docentes  ',
+                            'url' => '#',
+
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Gestión de Estudiantes  ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Matrículas  ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Expedientes  ',
+                            'url' => '#',
+
+                        ],
+                        [
+                            'text' => 'Seguimiento académico   ',
+                            'url' => '#',
+
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Gestión de Docentes  ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Datos del Personal  ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Horarios  ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Seguimiento de Evaluaciones ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Asignacion de Cursos  ',
+                            'url' => '#',
+                        ],
+
+                    ],
+                ],
+                [
+                    'text' => 'Reportes  ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Reportes de incidencias     ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => ' Reportes asistencias   ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => ' Reporte libretas    ',
+                            'url' => '#',
+                        ],
+
+                    ],
+                ],
+                [
+                    'text' => 'Configuraciones   ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Configuración del sistema ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Usuarios y permisos',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Certificados y documentos',
+                            'url' => '#',
+                        ],
+
+                    ],
+                ],
+
+            ],
         ],
+        //apartado del apoderado
         [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
+            'text' => 'paginas apoderado    ',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+
+                [
+                    'text' => 'Informacion Academica ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Calificaciones del estudiante ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => ' Asistencia del estudiante  ',
+                            'url' => '#',
+
+                        ],
+                        [
+                            'text' => '  Horarios del estudiante  ',
+                            'url' => '#',
+
+                        ],
+
+                    ],
+                ],
+                [
+                    'text' => 'Pagos y finanzas   ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Estado de cuentas   ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Realizar pagos de matricula  ',
+                            'url' => '#',
+
+                        ],
+                        [
+                            'text' => 'Solicitud de becas   ',
+                            'url' => '#',
+
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Documentos  ',
+                    'url' => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'certificados y constancias  ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Boletas de notas   ',
+                            'url' => '#',
+                        ],
+                        [
+                            'text' => 'Autorizaciones y solicitus de salidas ',
+                            'url' => '#',
+                        ]
+
+                    ],
+                ],
+
+
+            ],
         ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
+
     ],
 
     /*

@@ -469,3 +469,328 @@ JOIN seccion s ON a.id_seccion = s.id_seccion
 JOIN grado g ON a.id_grado = g.id_grado
 JOIN nivel n ON g.id_nivel = n.id_nivel
 JOIN anio_escolar ae ON m.id_anio = ae.id_anio;
+
+-- Datos para la Base de Datos Escolar Optimizada
+
+
+-- Insertar datos en la tabla anio_escolar
+INSERT INTO anio_escolar (anio, fecha_inicio, fecha_fin, estado)
+VALUES
+    (2024, '2024-03-01', '2024-12-31', 'activo'),
+    (2025, '2025-03-01', '2025-12-31', 'inactivo');
+
+-- Insertar datos en la tabla bimestre
+INSERT INTO bimestre (nombre_bimestre, fecha_inicio, fecha_fin, id_anio)
+VALUES
+    ('Primer Bimestre 2024', '2024-03-01', '2024-05-31', 1),
+    ('Segundo Bimestre 2024', '2024-06-01', '2024-08-31', 1),
+    ('Tercer Bimestre 2024', '2024-09-01', '2024-11-30', 1),
+    ('Cuarto Bimestre 2024', '2024-12-01', '2024-12-31', 1),
+    ('Primer Bimestre 2025', '2025-03-01', '2025-05-31', 2);
+
+-- Insertar datos en la tabla persona
+INSERT INTO persona (nombre, apellido, tipo_documento, numero_documento, telefono, email, direccion, estado)
+VALUES
+    -- Personal administrativo
+    ('Roberto', 'Gómez', 'DNI', '10254789', '912345678', 'roberto@colegio.edu', 'Av. Principal 123', 'activo'),
+    ('María', 'Sánchez', 'DNI', '10254790', '912345679', 'maria@colegio.edu', 'Calle Los Pinos 456', 'activo'),
+    
+    -- Profesores
+    ('Pedro', 'Gómez', 'DNI', '34567890', '987654323', 'pedro@colegio.edu', 'Calle Diamantes 789', 'activo'),
+    ('Laura', 'Rodríguez', 'DNI', '45678901', '987654324', 'laura@colegio.edu', 'Av. Los Álamos 234', 'activo'),
+    ('Javier', 'Mendoza', 'DNI', '56789012', '987654325', 'javier@colegio.edu', 'Jr. Las Begonias 567', 'activo'),
+    ('Carmen', 'Torres', 'DNI', '67890123', '987654326', 'carmen@colegio.edu', 'Calle Las Flores 890', 'activo'),
+    
+    -- Apoderados
+    ('Carlos', 'Pérez', 'DNI', '12345678', '987654321', 'carlos@email.com', 'Av. Libertad 123', 'activo'),
+    ('Ana', 'Martínez', 'DNI', '23456789', '987654322', 'ana@email.com', 'Av. Perú 456', 'activo'),
+    ('Jorge', 'Díaz', 'DNI', '78901234', '987654327', 'jorge@email.com', 'Jr. Lima 321', 'activo'),
+    ('Silvia', 'Vargas', 'DNI', '89012345', '987654328', 'silvia@email.com', 'Av. Brasil 654', 'activo'),
+    
+    -- Alumnos
+    ('Juan', 'Pérez', 'DNI', '90123456', '987654329', NULL, 'Av. Libertad 123', 'activo'),
+    ('María', 'Martínez', 'DNI', '01234567', '987654330', NULL, 'Av. Perú 456', 'activo'),
+    ('Luis', 'Díaz', 'DNI', '12345670', '987654331', NULL, 'Jr. Lima 321', 'activo'),
+    ('Lucía', 'Vargas', 'DNI', '23456701', '987654332', NULL, 'Av. Brasil 654', 'activo'),
+    ('Miguel', 'López', 'DNI', '34567012', '987654333', NULL, 'Calle Principal 789', 'activo'),
+    ('Ana', 'González', 'DNI', '45670123', '987654334', NULL, 'Jr. Huáscar 345', 'activo');
+
+-- Insertar datos en la tabla nivel
+INSERT INTO nivel (nombre, descripcion, estado)
+VALUES
+    ('Primaria', 'Nivel de educación primaria', 'activo'),
+    ('Secundaria', 'Nivel de educación secundaria', 'activo');
+
+-- Insertar datos en la tabla grado
+INSERT INTO grado (nombre_grado, id_nivel, estado)
+VALUES
+    ('Primer Grado', 1, 'activo'),
+    ('Segundo Grado', 1, 'activo'),
+    ('Tercer Grado', 1, 'activo'),
+    ('Cuarto Grado', 1, 'activo'),
+    ('Quinto Grado', 1, 'activo'),
+    ('Sexto Grado', 1, 'activo'),
+    ('Primer Año', 2, 'activo'),
+    ('Segundo Año', 2, 'activo'),
+    ('Tercer Año', 2, 'activo'),
+    ('Cuarto Año', 2, 'activo'),
+    ('Quinto Año', 2, 'activo');
+
+-- Insertar datos en la tabla seccion
+INSERT INTO seccion (nombre_seccion, descripcion, id_grado, capacidad_maxima, estado)
+VALUES
+    ('A', 'Sección A de primer grado primaria', 1, 30, 'activo'),
+    ('B', 'Sección B de primer grado primaria', 1, 30, 'activo'),
+    ('A', 'Sección A de segundo grado primaria', 2, 30, 'activo'),
+    ('A', 'Sección A de primer año secundaria', 7, 35, 'activo'),
+    ('B', 'Sección B de primer año secundaria', 7, 35, 'activo');
+
+-- Insertar datos en la tabla apoderado
+INSERT INTO apoderado (id_persona, telefono_emergencia)
+VALUES
+    (7, '999888777'), -- Carlos Pérez
+    (8, '999888776'), -- Ana Martínez
+    (9, '999888775'), -- Jorge Díaz
+    (10, '999888774'); -- Silvia Vargas
+
+-- Insertar datos en la tabla especialidad
+INSERT INTO especialidad (nombre, descripcion, estado)
+VALUES
+    ('Matemáticas', 'Especialidad en matemáticas', 'activo'),
+    ('Lengua y Literatura', 'Especialidad en lengua y literatura', 'activo'),
+    ('Ciencias Sociales', 'Especialidad en historia y geografía', 'activo'),
+    ('Ciencias Naturales', 'Especialidad en biología, química y física', 'activo'),
+    ('Educación Física', 'Especialidad en educación física', 'activo'),
+    ('Inglés', 'Especialidad en idioma inglés', 'activo');
+
+-- Insertar datos en la tabla profesor
+INSERT INTO profesor (id_persona, id_especialidad, tipo, fecha_ingreso)
+VALUES
+    (3, 1, 'titular', '2015-01-15'), -- Pedro Gómez - Matemáticas
+    (4, 2, 'contratado', '2020-03-10'), -- Laura Rodríguez - Lengua y Literatura
+    (5, 3, 'titular', '2018-04-05'), -- Javier Mendoza - Ciencias Sociales
+    (6, 4, 'contratado', '2021-02-20'); -- Carmen Torres - Ciencias Naturales
+
+-- Insertar datos en la tabla alumno
+INSERT INTO alumno (id_persona, fecha_nacimiento, genero, id_apoderado, id_seccion, id_grado)
+VALUES
+    (11, '2016-05-10', 'M', 1, 1, 1), -- Juan Pérez - 1° Grado Primaria, Sección A
+    (12, '2016-07-15', 'F', 2, 2, 1), -- María Martínez - 1° Grado Primaria, Sección B
+    (13, '2015-09-20', 'M', 3, 3, 2), -- Luis Díaz - 2° Grado Primaria, Sección A
+    (14, '2012-11-25', 'F', 4, 4, 7), -- Lucía Vargas - 1° Año Secundaria, Sección A
+    (15, '2012-03-30', 'M', 1, 5, 7), -- Miguel López - 1° Año Secundaria, Sección B
+    (16, '2011-06-05', 'F', 2, 4, 7); -- Ana González - 1° Año Secundaria, Sección A
+
+-- Insertar datos en la tabla curso
+INSERT INTO curso (codigo_curso, nombre_curso, tipo_curso, descripcion, id_grado, horas_semanales, creditos, estado)
+VALUES
+    ('MAT1P', 'Matemática 1° Primaria', 'obligatorio', 'Curso de matemáticas para primer grado', 1, 6, 4, 'activo'),
+    ('LEN1P', 'Comunicación 1° Primaria', 'obligatorio', 'Curso de comunicación para primer grado', 1, 6, 4, 'activo'),
+    ('MAT2P', 'Matemática 2° Primaria', 'obligatorio', 'Curso de matemáticas para segundo grado', 2, 6, 4, 'activo'),
+    ('LEN2P', 'Comunicación 2° Primaria', 'obligatorio', 'Curso de comunicación para segundo grado', 2, 6, 4, 'activo'),
+    ('MAT1S', 'Matemática 1° Secundaria', 'obligatorio', 'Álgebra y aritmética', 7, 6, 4, 'activo'),
+    ('LEN1S', 'Comunicación 1° Secundaria', 'obligatorio', 'Gramática y literatura', 7, 6, 4, 'activo'),
+    ('CTA1S', 'Ciencia y Ambiente 1° Secundaria', 'obligatorio', 'Biología y química básica', 7, 4, 3, 'activo'),
+    ('HGE1S', 'Historia y Geografía 1° Secundaria', 'obligatorio', 'Historia del Perú y geografía', 7, 4, 3, 'activo');
+
+-- Insertar datos en la tabla asignacion_curso
+INSERT INTO asignacion_curso (id_profesor, id_curso, id_seccion, id_anio, dia_semana, hora_inicio, hora_fin, aula, estado)
+VALUES
+    -- Pedro Gómez - Matemáticas
+    (1, 1, 1, 1, 'Lunes', '08:00', '09:30', 'A-101', 'activo'),     -- 1° Primaria A
+    (1, 1, 2, 1, 'Martes', '08:00', '09:30', 'A-102', 'activo'),    -- 1° Primaria B
+    (1, 3, 3, 1, 'Miércoles', '08:00', '09:30', 'A-103', 'activo'), -- 2° Primaria A
+    (1, 5, 4, 1, 'Jueves', '08:00', '09:30', 'B-201', 'activo'),    -- 1° Secundaria A
+    (1, 5, 5, 1, 'Viernes', '08:00', '09:30', 'B-202', 'activo'),   -- 1° Secundaria B
+    
+    -- Laura Rodríguez - Comunicación
+    (2, 2, 1, 1, 'Lunes', '10:00', '11:30', 'A-101', 'activo'),     -- 1° Primaria A
+    (2, 2, 2, 1, 'Martes', '10:00', '11:30', 'A-102', 'activo'),    -- 1° Primaria B
+    (2, 4, 3, 1, 'Miércoles', '10:00', '11:30', 'A-103', 'activo'), -- 2° Primaria A
+    (2, 6, 4, 1, 'Jueves', '10:00', '11:30', 'B-201', 'activo'),    -- 1° Secundaria A
+    (2, 6, 5, 1, 'Viernes', '10:00', '11:30', 'B-202', 'activo'),   -- 1° Secundaria B
+    
+    -- Javier Mendoza - Historia y Geografía
+    (3, 8, 4, 1, 'Lunes', '12:00', '13:30', 'B-201', 'activo'),     -- 1° Secundaria A
+    (3, 8, 5, 1, 'Martes', '12:00', '13:30', 'B-202', 'activo'),    -- 1° Secundaria B
+    
+    -- Carmen Torres - Ciencias Naturales
+    (4, 7, 4, 1, 'Miércoles', '12:00', '13:30', 'B-201', 'activo'), -- 1° Secundaria A
+    (4, 7, 5, 1, 'Jueves', '12:00', '13:30', 'B-202', 'activo');    -- 1° Secundaria B
+
+-- Insertar datos en la tabla matricula
+INSERT INTO matricula (id_alumno, id_curso, id_anio, fecha_inscripcion, estado)
+VALUES
+    -- Juan Pérez - 1° Primaria A
+    (1, 1, 1, '2024-02-15', 'activo'), -- Matemática
+    (1, 2, 1, '2024-02-15', 'activo'), -- Comunicación
+    
+    -- María Martínez - 1° Primaria B
+    (2, 1, 1, '2024-02-16', 'activo'), -- Matemática
+    (2, 2, 1, '2024-02-16', 'activo'), -- Comunicación
+    
+    -- Luis Díaz - 2° Primaria A
+    (3, 3, 1, '2024-02-17', 'activo'), -- Matemática
+    (3, 4, 1, '2024-02-17', 'activo'), -- Comunicación
+    
+    -- Lucía Vargas - 1° Secundaria A
+    (4, 5, 1, '2024-02-18', 'activo'), -- Matemática
+    (4, 6, 1, '2024-02-18', 'activo'), -- Comunicación
+    (4, 7, 1, '2024-02-18', 'activo'), -- Ciencias
+    (4, 8, 1, '2024-02-18', 'activo'), -- Historia
+    
+    -- Miguel López - 1° Secundaria B
+    (5, 5, 1, '2024-02-19', 'activo'), -- Matemática
+    (5, 6, 1, '2024-02-19', 'activo'), -- Comunicación
+    (5, 7, 1, '2024-02-19', 'activo'), -- Ciencias
+    (5, 8, 1, '2024-02-19', 'activo'), -- Historia
+    
+    -- Ana González - 1° Secundaria A
+    (6, 5, 1, '2024-02-20', 'activo'), -- Matemática
+    (6, 6, 1, '2024-02-20', 'activo'), -- Comunicación
+    (6, 7, 1, '2024-02-20', 'activo'), -- Ciencias
+    (6, 8, 1, '2024-02-20', 'activo'); -- Historia
+
+-- Insertar datos en la tabla tipo_evaluacion
+INSERT INTO tipo_evaluacion (nombre, descripcion, peso, estado)
+VALUES
+    ('Examen Parcial', 'Evaluación parcial del bimestre', 30.00, 'activo'),
+    ('Examen Final', 'Evaluación final del bimestre', 40.00, 'activo'),
+    ('Participación', 'Evaluación de la participación en clase', 10.00, 'activo'),
+    ('Tarea', 'Evaluación de tareas y trabajos', 20.00, 'activo');
+
+-- Insertar datos en la tabla evaluacion
+INSERT INTO evaluacion (id_matricula, id_asignacion, id_bimestre, id_tipo_evaluacion, calificacion, fecha_evaluacion, observaciones, estado)
+VALUES
+    -- Juan Pérez - Matemática
+    (1, 1, 1, 1, 16.00, '2024-04-15', 'Buen desempeño en operaciones básicas', 'activo'), -- Parcial
+    (1, 1, 1, 4, 18.00, '2024-04-30', 'Entregó todas las tareas a tiempo', 'activo'),    -- Tarea
+    (1, 1, 1, 2, 17.00, '2024-05-30', 'Excelente resolución de problemas', 'activo'),    -- Final
+    
+    -- Juan Pérez - Comunicación
+    (2, 6, 1, 1, 15.00, '2024-04-16', 'Buena comprensión lectora', 'activo'),           -- Parcial
+    (2, 6, 1, 4, 16.00, '2024-05-02', 'Mejoró en redacción', 'activo'),                 -- Tarea
+    (2, 6, 1, 2, 15.50, '2024-05-31', 'Buen análisis de textos', 'activo'),             -- Final
+    
+    -- María Martínez - Matemática
+    (3, 2, 1, 1, 18.00, '2024-04-15', 'Excelente resolución de ejercicios', 'activo'),  -- Parcial
+    (3, 2, 1, 4, 19.00, '2024-04-30', 'Destacada en todas las tareas', 'activo'),       -- Tarea
+    (3, 2, 1, 2, 20.00, '2024-05-30', 'Dominio completo de los temas', 'activo'),       -- Final
+    
+    -- Lucía Vargas - Matemática
+    (7, 4, 1, 1, 14.00, '2024-04-20', 'Debe mejorar en álgebra', 'activo'),             -- Parcial
+    (7, 4, 1, 4, 16.00, '2024-05-05', 'Tareas completas pero con errores', 'activo'),   -- Tarea
+    (7, 4, 1, 2, 15.00, '2024-05-28', 'Mejoró en comparación al parcial', 'activo'),    -- Final
+    
+    -- Lucía Vargas - Historia
+    (10, 11, 1, 1, 17.00, '2024-04-22', 'Buen conocimiento de historia', 'activo'),     -- Parcial
+    (10, 11, 1, 3, 18.00, '2024-05-10', 'Participación activa en debates', 'activo'),   -- Participación
+    (10, 11, 1, 2, 16.50, '2024-05-29', 'Buen análisis crítico', 'activo');             -- Final
+
+-- Insertar datos en la tabla asistencia
+INSERT INTO asistencia (id_matricula, id_asignacion, fecha, estado_asistencia, observaciones)
+VALUES
+    -- Juan Pérez - Matemática
+    (1, 1, '2024-03-04', 'presente', NULL),
+    (1, 1, '2024-03-11', 'presente', NULL),
+    (1, 1, '2024-03-18', 'falta', 'No justificó la falta'),
+    (1, 1, '2024-03-25', 'presente', NULL),
+    (1, 1, '2024-04-01', 'presente', NULL),
+    (1, 1, '2024-04-08', 'tardanza', 'Llegó 10 minutos tarde'),
+    
+    -- María Martínez - Matemática
+    (3, 2, '2024-03-05', 'presente', NULL),
+    (3, 2, '2024-03-12', 'presente', NULL),
+    (3, 2, '2024-03-19', 'presente', NULL),
+    (3, 2, '2024-03-26', 'presente', NULL),
+    (3, 2, '2024-04-02', 'justificado', 'Presentó certificado médico'),
+    (3, 2, '2024-04-09', 'presente', NULL),
+    
+    -- Lucía Vargas - Historia
+    (10, 11, '2024-03-04', 'presente', NULL),
+    (10, 11, '2024-03-11', 'presente', NULL),
+    (10, 11, '2024-03-18', 'presente', NULL),
+    (10, 11, '2024-03-25', 'tardanza', 'Llegó 5 minutos tarde'),
+    (10, 11, '2024-04-01', 'presente', NULL),
+    (10, 11, '2024-04-08', 'presente', NULL);
+
+-- Insertar datos en la tabla area
+INSERT INTO area (nombre, tipo, capacidad, ubicacion, estado)
+VALUES
+    ('Laboratorio de Ciencias', 'académica', 30, 'Edificio B, Primer Piso', 'activo'),
+    ('Biblioteca', 'académica', 50, 'Edificio A, Segundo Piso', 'activo'),
+    ('Cancha Deportiva', 'deportiva', 100, 'Patio Central', 'activo'),
+    ('Sala de Cómputo', 'académica', 25, 'Edificio C, Primer Piso', 'activo'),
+    ('Auditorio', 'eventos', 200, 'Edificio Central', 'activo');
+
+-- Insertar datos en la tabla responsable_area
+INSERT INTO responsable_area (id_area, id_profesor, fecha_inicio, fecha_fin, estado)
+VALUES
+    (1, 4, '2024-03-01', '2024-12-31', 'activo'), -- Carmen Torres - Laboratorio de Ciencias
+    (2, 2, '2024-03-01', '2024-12-31', 'activo'), -- Laura Rodríguez - Biblioteca
+    (4, 1, '2024-03-01', '2024-12-31', 'activo'); -- Pedro Gómez - Sala de Cómputo
+
+-- Insertar datos en la tabla reserva
+INSERT INTO reserva (id_area, id_profesor, fecha_reserva, hora_inicio, hora_fin, motivo, estado, fecha_registro)
+VALUES
+    (1, 4, '2024-05-20', '10:00', '12:00', 'Práctica de laboratorio con 1° secundaria', 'aprobado', '2024-05-10'),
+    (2, 2, '2024-05-21', '14:00', '16:00', 'Investigación bibliográfica con 1° primaria', 'aprobado', '2024-05-11'),
+    (4, 1, '2024-05-22', '08:00', '10:00', 'Clase de informática con 2° primaria', 'pendiente', '2024-05-12'),
+    (5, 3, '2024-05-25', '09:00', '11:00', 'Exposición de historia para 1° secundaria', 'pendiente', '2024-05-15');
+
+-- Insertar datos en la tabla rol
+INSERT INTO rol (nombre, descripcion, estado)
+VALUES
+    ('Administrador', 'Control total del sistema', 'activo'),
+    ('Director', 'Gestión académica y administrativa', 'activo'),
+    ('Profesor', 'Gestión académica limitada', 'activo'),
+    ('Secretaría', 'Gestión administrativa limitada', 'activo'),
+    ('Alumno', 'Acceso a información personal', 'activo'),
+    ('Apoderado', 'Acceso a información del alumno', 'activo');
+
+-- Insertar datos en la tabla permiso
+INSERT INTO permiso (nombre, codigo, descripcion, estado)
+VALUES
+    ('Gestión de Usuarios', 'USR_ADMIN', 'Crear, modificar y eliminar usuarios', 'activo'),
+    ('Gestión de Matrículas', 'MAT_ADMIN', 'Gestionar el proceso de matrícula', 'activo'),
+    ('Registro de Notas', 'NOTA_REG', 'Registrar y modificar notas', 'activo'),
+    ('Registro de Asistencias', 'ASIS_REG', 'Registrar y modificar asistencias', 'activo'),
+    ('Consulta de Notas', 'NOTA_VIEW', 'Ver notas', 'activo'),
+    ('Consulta de Asistencias', 'ASIS_VIEW', 'Ver asistencias', 'activo'),
+    ('Reserva de Áreas', 'AREA_RES', 'Reservar áreas del colegio', 'activo'),
+    ('Gestión de Horarios', 'HOR_ADMIN', 'Crear y modificar horarios', 'activo'),
+    ('Reportes Académicos', 'REP_ACAD', 'Generar reportes académicos', 'activo'),
+    ('Reportes Administrativos', 'REP_ADM', 'Generar reportes administrativos', 'activo');
+
+-- Insertar datos en la tabla rol_permiso
+INSERT INTO rol_permiso (id_rol, id_permiso)
+VALUES
+    -- Administrador
+    (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10),
+    
+    -- Director
+    (2, 2), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10),
+    
+    -- Profesor
+    (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 9),
+    
+    -- Secretaría
+    (4, 2), (4, 5), (4, 6), (4, 7), (4, 10),
+    
+    -- Alumno
+    (5, 5), (5, 6),
+    
+    -- Apoderado
+    (6, 5), (6, 6);
+
+-- Insertar datos en la tabla usuario
+INSERT INTO usuario (id_persona, nombre_usuario, contrasena, id_rol, estado)
+VALUES
+    (1, 'roberto.admin', 'password_hash_1', 1, 'activo'),    -- Administrador
+    (2, 'maria.directora', 'password_hash_2', 2, 'activo'),  -- Directora
+    (3, 'pedro.profesor', 'password_hash_3', 3, 'activo'),   -- Profesor
+    (4, 'laura.profesora', 'password_hash_4', 3, 'activo'),  -- Profesora
+    (7, 'carlos.apoderado', 'password_hash_5', 6, 'activo'), -- Apoderado
+    (8, 'ana.apoderada', 'password_hash_6', 6, 'activo'),    -- Apoderada
+    (11, 'juan.alumno', 'password_hash_7', 5, 'activo'),     -- Alumno
+    (12, 'maria.alumna', 'password_hash_8', 5, 'activo');    -- Alumna
