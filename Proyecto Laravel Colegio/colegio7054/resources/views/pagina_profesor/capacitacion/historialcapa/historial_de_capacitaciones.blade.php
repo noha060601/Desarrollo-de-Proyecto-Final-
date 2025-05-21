@@ -1,3 +1,4 @@
+<!-- pagina corregida con formato  -->
 @extends('adminlte::page')
 
 @section('title', 'Historial de Capacitaciones')
@@ -9,7 +10,8 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h3>Lista de Capacitaciones</h3>
+            <img src="{{ asset('imagenes/insig1.png') }}" alt="Insignia" class="header-badge">
+            <h3 class="header-title">HISTORIAL DE CAPACITACIONES TRASCURRIDAS</h3>
         </div>
         <div class="card-body">
             <!-- Filtros para seleccionar capacitación y fecha -->
@@ -108,30 +110,75 @@
 
 @section('css')
     <style>
-        .card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
+            .card {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .card-header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                padding: 20px;
+                background-color: #1f048d; /* Color de fondo celeste */
+                color: #fff;
+                text-shadow: 2px 2px 0 rgb(0, 0, 0);
+            }
+
+            .header-badge {
+                position: absolute;
+                left: 10px;
+                height: 60px; /* Ajusta el tamaño de la insignia */
+            }
+
+            .header-title {
+                font-family: 'Arial Black', sans-serif;
+                font-size: 35px; /* Ajusta el tamaño de la fuente */
+                margin: 0;
+            }
+
+            .table th, .table td {
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            .btn-primary, .btn-secondary {
+                border-radius: 5px;
+                padding: 10px 20px;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .btn-secondary {
+                background-color: #6c757d;
+                border-color: #6c757d;
+            }
+
+            @media print {
+                @media print {
+            /* Ocultar botones al imprimir */
+            .btn-primary, .btn-secondary {
+                display: none;
+            }
+
+            /* Ocultar encabezados y formularios */
+            .card-header, .card-body form {
+                display: none;
+            }
+
+            /* Ocultar columnas que no quieres imprimir */
+            .table th:nth-child(1), .table td:nth-child(1),
+            .table th:nth-child(5), .table td:nth-child(5) {
+                display: none;
+            }
         }
-        .card-header {
-            background-color: #007bff;
-            color: #fff;
-        }
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-        .btn-primary, .btn-secondary {
-            border-radius: 5px;
-            padding: 10px 20px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
+
+            }
     </style>
 @endsection
 
@@ -152,7 +199,7 @@
                 const fechaCapacitacion = fila.cells[2].innerText;
 
                 const mostrarFila = (capacitacionValor === "" || nombreCapacitacion === capacitacionValor) &&
-                                   (fechaValor === "" || fechaCapacitacion === fechaValor);
+                                (fechaValor === "" || fechaCapacitacion === fechaValor);
 
                 fila.style.display = mostrarFila ? "" : "none";
             }

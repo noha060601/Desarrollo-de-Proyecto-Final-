@@ -1,204 +1,282 @@
+
+<!-- pagina corregida con formato  -->
 @extends('adminlte::page')
 
-@section('title', 'Calendario y Horarios')
-
 @section('content_header')
-    <h1 class="text-center">Calendario y Gestión de Horarios</h1>
+    <div class="header-container">
+        <img src="{{ asset('imagenes/insig1.png') }}" alt="Insignia" class="header-badge">
+        <h1 class="sec">NOTAS DE HORARIO DETALLADO</h1>
+    </div>
 @endsection
 
-<?php
-// Función para asignar colores a cada mes
-function getColorForMonth($month) {
-    $monthColors = [
-        1 => "#FFCCCC",    // Rojo claro (Enero)
-        2 => "#FFE5CC",    // Naranja claro (Febrero)
-        3 => "#FFFFCC",    // Amarillo claro (Marzo)
-        4 => "#CCFFCC",    // Verde claro (Abril)
-        5 => "#CCFFFF",    // Celeste (Mayo)
-        6 => "#CCE5FF",    // Azul claro (Junio)
-        7 => "#CCCCFF",    // Morado claro (Julio)
-        8 => "#E5CCFF",    // Lila (Agosto)
-        9 => "#FFCCFF",    // Rosado (Septiembre)
-        10 => "#FFD9E8",   // Rosa pálido (Octubre)
-        11 => "#FFE6CC",   // Durazno claro (Noviembre)
-        12 => "#D9CCFF"    // Lavanda claro (Diciembre)
-    ];
-    return $monthColors[$month] ?? "#FFFFFF"; // Color blanco por defecto
-}
-?>
-
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <!-- Filtros -->
-        <form>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <select name="seccion" class="form-control">
-                        <option value="">Todas las secciones</option>
-                    </select>
+    <div id="calendar-wrapper" class="card p-3">
+        <div id="calendar"></div>
+        <button id="add-event-btn" class="btn btn-primary mt-3">Agregar Evento</button>
+    </div>
+
+    <!-- Modal para agregar evento -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Agregar Evento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="col-md-4">
-                    <select name="grado" class="form-control">
-                        <option value="">Todos los grados</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <select name="curso" class="form-control">
-                        <option value="">Todos los cursos</option>
-                    </select>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <div class="form-group">
+                            <label for="eventTitle">Título del Evento</label>
+                            <input type="text" class="form-control" id="eventTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDate">Fecha y Hora</label>
+                            <input type="datetime-local" class="form-control" id="eventDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDescription">Descripción</label>
+                            <textarea class="form-control" id="eventDescription"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventPriority">Prioridad</label>
+                            <select class="form-control" id="eventPriority" required>
+                                <option value="high">Alta (Rojo)</option>
+                                <option value="medium">Media (Celeste)</option>
+                                <option value="low">Baja (Verde)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">Guardar Evento</button>
+                    </form>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Filtrar</button>
-            <button type="button" onclick="exportToPDF()" class="btn btn-secondary">Exportar a PDF</button>
-        </form>
-
-        <!-- Calendario -->
-        <div id="calendario" class="calendario">
-            @foreach ($meses as $mes => $dias)
-                <div class="mes border rounded shadow-sm m-2 p-3 d-none" style="background-color: {{ getColorForMonth($mes) }};">
-                    <div class="nombre-mes text-uppercase">{{ $mes }}</div>
-                    <div class="dias">
-                        @for ($i = 1; $i <= $dias; $i++)
-                            <div class="dia">
-                                {{ $i }}
-                                <div class="eventos">
-                                    @if ($i % 5 == 0)
-                                        <span class="badge badge-info">Evento</span>
-                                    @endif
-                                </div>
-                            </div>
-                        @endfor
-                    </div>
-                </div>
-            @endforeach
-        </div>
-        <div class="text-center">
-            <button id="prevMonth" class="btn btn-primary">← Mes Anterior</button>
-            <button id="nextMonth" class="btn btn-primary">Mes Siguiente →</button>
         </div>
     </div>
-
-    <!-- Horarios del Día -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <h3 id="selectedDateHeader">Horarios del día</h3>
-            <div class="time-slots" id="timeSlots"></div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('css')
-<style>
-    .calendario {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 20px;
-    }
-    .mes {
-        width: 90%;
-        max-width: 1200px;
-        margin: 20px auto;
-        border-radius: 10px;
-        background-color: #ffffff;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .nombre-mes {
-        font-size: 36px;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .dias {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 15px;
-    }
-    .dia {
-        height: 100px;
-        text-align: center;
-        padding: 20px;
-        background-color: #f8f9fa;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        position: relative;
-        font-size: 18px;
-    }
-    .dia:hover {
-        background-color: #e9ecef;
-        cursor: pointer;
-    }
-    .time-slots .time-slot {
-        margin: 5px 0;
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #f0f0f0;
-    }
-</style>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.css" rel="stylesheet">
+    <style>
+            .header-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #333;
+                padding: 20px;
+                border-radius: 8px;
+                color: #fff;
+                margin-bottom: 20px;
+                position: relative;
+            }
+
+            .header-badge {
+                position: absolute;
+                left: 20px;
+                height: 60px;
+            }
+
+            .sec {
+                text-align: center;
+                font-family: Arial Black;
+                font-size: 90px;
+                color: white;
+                text-shadow: 7px 6px 0 rgb(4, 1, 1);
+                padding: 10px;
+                border-radius: 15px;
+            }
+
+            #calendar-wrapper {
+                background-color: #f8f9fa;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                max-width: 100%;
+                height: 80vh;
+                margin: 0 auto;
+                padding: 20px;
+                overflow: auto;
+            }
+
+            .fc-toolbar {
+                background-color: #007bff;
+                color: white;
+                text-align: center;
+                padding: 10px 0;
+                border-radius: 5px;
+            }
+
+            .fc-event {
+                position: relative;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white !important;
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .fc-event.fc-high {
+                background-color: #dc3545 !important;
+            }
+
+            .fc-event.fc-medium {
+                background-color: #17a2b8 !important;
+            }
+
+            .fc-event.fc-low {
+                background-color: #28a745 !important;
+            }
+
+            .fc-day-header {
+                background-color: #007bff !important;
+                color: rgb(7, 7, 7);
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .fc-sat, .fc-sun {
+                background-color: #eff4f5 !important;
+            }
+
+            .fc-day-number {
+                font-weight: bold;
+                font-size: 1.2rem;
+                color: #333;
+            }
+
+            .fc-event .delete-event {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+                background: rgba(0, 0, 0, 0.5);
+                border-radius: 50%;
+                padding: 5px;
+            }
+
+            /* Estilo para mostrar la descripción en el evento */
+            .fc-event .fc-event-title {
+                display: none; /* Ocultar el título */
+            }
+
+            .fc-event .fc-event-description {
+                display: block;
+                font-size: 12px;
+                margin-top: 5px;
+                color: #f8f9fa;
+                opacity: 0.8;
+                word-wrap: break-word;
+                padding-top: 5px;
+            }
+
+        /* Asegurarse de que la descripción se vea en todas las vistas */
+            .fc-event {
+                position: relative;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white !important;
+                font-weight: bold;
+                text-align: center;
+                min-height: 30px; /* Para asegurarse de que haya suficiente espacio para la descripción */
+            }
+    </style>
 @endsection
 
 @section('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const meses = document.querySelectorAll('.mes');
-        let currentMonth = new Date().getMonth();
-        const currentDay = new Date().getDate();
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
 
-        function showMonth(index) {
-            meses.forEach((mes, i) => {
-                mes.classList.add('d-none');
-                if (i === index) {
-                    mes.classList.remove('d-none');
+    <script>
+        $(document).ready(function() {
+            var events = [];  // Array para almacenar los eventos
+
+            // Inicialización del calendario
+            $('#calendar').fullCalendar({
+                locale: 'es',
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día'
+                },
+                events: events, // Mostrar los eventos del array
+
+                // Al hacer clic en un día, abrir el modal para agregar un evento
+                dayClick: function(date, jsEvent, view) {
+                    $('#eventModal').modal('show');
+                    $('#eventDate').val(date.format('YYYY-MM-DDTHH:mm'));
+                },
+
+                // Configuración del calendario
+                defaultView: 'month',
+                monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                dayNamesShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                today: "Hoy",
+                weekLabel: "Semana",
+                allDayText: "Todo el día",
+                eventLimitText: "más",
+                eventRender: function(event, element) {
+                    // Mostrar la descripción del evento en el pop-up y dentro del evento
+                    if (event.description) {
+                        element.find('.fc-title').append('<br><span class="fc-event-description">' + event.description + '</span>');
+                    }
                 }
             });
-            highlightToday(index);
-        }
 
-        function highlightToday(monthIndex) {
-            const days = meses[monthIndex].querySelectorAll('.dia');
-            days.forEach((day) => {
-                if (parseInt(day.textContent) === currentDay && monthIndex === currentMonth) {
-                    day.style.backgroundColor = '#FFD700';
-                    day.style.fontWeight = 'bold';
+            // Mostrar el modal para agregar evento
+            $('#add-event-btn').on('click', function() {
+                $('#eventModal').modal('show');
+            });
+
+            // Guardar el evento
+            $('#eventForm').on('submit', function(event) {
+                event.preventDefault();
+
+                var title = $('#eventTitle').val();
+                var date = $('#eventDate').val();
+                var description = $('#eventDescription').val();
+                var priority = $('#eventPriority').val();
+
+                if (title && date) {
+                    // Definir la clase del evento según la prioridad
+                    var eventClass = '';
+                    if (priority === 'high') {
+                        eventClass = 'fc-high';
+                    } else if (priority === 'medium') {
+                        eventClass = 'fc-medium';
+                    } else if (priority === 'low') {
+                        eventClass = 'fc-low';
+                    }
+
+                    // Crear el nuevo evento con la descripción como título
+                    var newEvent = {
+                        title: title,  // El título sigue siendo el título original
+                        start: date,
+                        description: description,  // Se agrega la descripción
+                        className: eventClass
+                    };
+
+                    // Agregar el evento al array
+                    events.push(newEvent);
+
+                    // Renderizar el evento en el calendario
+                    $('#calendar').fullCalendar('renderEvent', newEvent, true);
+
+                    // Cerrar el modal
+                    $('#eventModal').modal('hide');
+                    $('#eventForm')[0].reset();
                 }
             });
-        }
-
-        function createTimeSlots() {
-            const container = document.getElementById('timeSlots');
-            container.innerHTML = '';
-            for (let hour = 0; hour < 24; hour++) {
-                const slot = document.createElement('div');
-                slot.className = 'time-slot';
-                slot.textContent = `${hour}:00 - ${hour + 1}:00`;
-                container.appendChild(slot);
-            }
-        }
-
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("Horario Detallado", 10, 10);
-            doc.save("horario_detallado.pdf");
-        }
-
-        document.getElementById('prevMonth').addEventListener('click', () => {
-            currentMonth = (currentMonth > 0) ? currentMonth - 1 : meses.length - 1;
-            showMonth(currentMonth);
         });
-
-        document.getElementById('nextMonth').addEventListener('click', () => {
-            currentMonth = (currentMonth < meses.length - 1) ? currentMonth + 1 : 0;
-            showMonth(currentMonth);
-        });
-
-        showMonth(currentMonth);
-        createTimeSlots();
-    });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    </script>
 @endsection
 
 

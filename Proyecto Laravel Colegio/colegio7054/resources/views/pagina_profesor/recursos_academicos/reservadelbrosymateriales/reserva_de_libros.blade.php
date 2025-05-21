@@ -10,100 +10,104 @@
 @endsection
 
 @section('content')
-<div class="background-image">
-    <div class="form-container">
-        <form action="" method="POST">
-            @csrf
-            <!-- Encabezado de Título y Fecha -->
-            <div class="title-section">
-                <h3 class="main-title">FICHA DE RESERVA</h3>
-                <label class="date-label">Fecha: <input type="date" name="date" class="date-input"></label>
-            </div>
+    <div class="background-image">
+        <div class="form-container">
+            <form id="reservationForm" action="" method="POST">
+                @csrf
+                <!-- Encabezado de Título y Fecha -->
+                <div class="title-section">
+                    <h3 class="main-title">FICHA DE RESERVA</h3>                 
 
-            <!-- Dividir el formulario en dos columnas -->
-            <div class="row">
-                <!-- Primera columna -->
-                <div class="col-md-6">
-                    <!-- Detalles del Libro -->
-                    <div class="section">
-                        <h3 class="main-title">Detalles del Libro</h3>
-                        <div class="form-group">
-                            <label for="book_title">Título del Libro:</label>
-                            <input type="text" id="book_title" name="book_title" class="form-control">
+                    <!-- Campo solo lectura -->
+                    <label class="date-label">Fecha de Reserva:
+                        <input type="date" id="fecha" name="fecha" class="date-input" readonly>
+                    </label>
+                </div>
+
+                <!-- Dividir el formulario en dos columnas -->
+                <div class="row">
+                    <!-- Primera columna -->
+                    <div class="col-md-6">
+                        <!-- Detalles del Libro -->
+                        <div class="section">
+                            <h3 class="main-title">Detalles del Libro</h3>
+                            <div class="form-group">
+                                <label for="book_title">Título del Libro:</label>
+                                <input type="text" id="book_title" name="book_title" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="author">Autor:</label>
+                                <input type="text" id="author" name="author" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="genre">Género:</label>
+                                <select id="genre" name="genre" class="form-control">
+                                    <option value="matematica">Matemática</option>
+                                    <option value="comunicacion">Comunicación</option>
+                                    <option value="ciencia">Ciencia</option>
+                                    <option value="historia">Historia</option>
+                                    <option value="biografia">Biografía</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="author">Autor:</label>
-                            <input type="text" id="author" name="author" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="genre">Género:</label>
-                            <select id="genre" name="genre" class="form-control">
-                                <option value="matematica">Matemática</option>
-                                <option value="comunicacion">Comunicación</option>
-                                <option value="ciencia">Ciencia</option>
-                                <option value="historia">Historia</option>
-                                <option value="biografia">Biografía</option>
-                            </select>
+
+                        <!-- Detalles de Reserva -->
+                        <div class="section">
+                            <h3 class="main-title">Detalles de la Reserva</h3>
+                            <div class="form-group">
+                                <label for="pickup_date">Fecha de Retiro:</label>
+                                <input type="date" id="pickup_date" name="pickup_date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="return_date">Fecha de Devolución:</label>
+                                <input type="date" id="return_date" name="return_date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="location">Ubicación de la Biblioteca:</label>
+                                <select id="location" name="location" class="form-control">
+                                    <option value="central">Biblioteca Central</option>
+                                    <option value="sucursal1">Biblioteca de primaria</option>
+                                    <option value="sucursal2">Biblioteca de secundaria</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Detalles de Reserva -->
-                    <div class="section">
-                        <h3 class="main-title">Detalles de la Reserva</h3>
-                        <div class="form-group">
-                            <label for="pickup_date">Fecha de Retiro:</label>
-                            <input type="date" id="pickup_date" name="pickup_date" class="form-control">
+                    <!-- Segunda columna -->
+                    <div class="col-md-6">
+                        <!-- Detalles de Contacto -->
+                        <div class="section">
+                            <h3 class="main-title">Detalles de Contacto</h3>
+                            <div class="form-group">
+                                <label for="name">Nombre:</label>
+                                <input type="text" id="name" name="name" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Teléfono:</label>
+                                <input type="text" id="phone" name="phone" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo Electrónico:</label>
+                                <input type="email" id="email" name="email" class="form-control">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="return_date">Fecha de Devolución:</label>
-                            <input type="date" id="return_date" name="return_date" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Ubicación de la Biblioteca:</label>
-                            <select id="location" name="location" class="form-control">
-                                <option value="central">Biblioteca Central</option>
-                                <option value="sucursal1">Biblioteca de primaria</option>
-                                <option value="sucursal2">Biblioteca de segundaria</option>
-                            </select>
+
+                        <div class="section">
+                            <div class="form-group">
+                                <label for="additional_notes">Notas Adicionales:</label>
+                                <textarea id="additional_notes" name="additional_notes" class="form-control"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Segunda columna -->
-                <div class="col-md-6">
-                    <!-- Detalles de Contacto -->
-                    <div class="section">
-                        <h3 class="main-title">Detalles de Contacto</h3>
-                        <div class="form-group">
-                            <label for="name">Nombre:</label>
-                            <input type="text" id="name" name="name" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Teléfono:</label>
-                            <input type="text" id="phone" name="phone" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Correo Electrónico:</label>
-                            <input type="email" id="email" name="email" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="form-group">
-                            <label for="additional_notes">Notas Adicionales:</label>
-                            <textarea id="additional_notes" name="additional_notes" class="form-control"></textarea>
-                        </div>
-                    </div>
+                <!-- Botón de Enviar -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Enviar Reserva</button>
                 </div>
-            </div>
-
-            <!-- Botón de Enviar -->
-            <div class="button-group">
-                <button type="submit" class="btn btn-primary">Enviar Reserva</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 @endsection
 
 @section('css')
@@ -145,8 +149,6 @@
     left: 20px; /* Posiciona la insignia al extremo izquierdo */
     height: 60px;
 }
-
-
     /* Fondo de pantalla completa */
     .background-image {
         background: url('{{ asset('imagenes/foncol.jpg') }}') no-repeat center center fixed;
@@ -168,8 +170,6 @@
     }
 
     /* Estilo del encabezado */
-
-
     .title-section {
     background-color: #ffcc00;
     padding: 10px;
@@ -191,9 +191,6 @@
 .date-label {
     margin: 0;
 }
-
-
-
     /* Estilos para los campos de formulario */
     .form-control, .form-control-file, .form-group select {
         width: 100%;
@@ -250,5 +247,24 @@
 @endsection
 
 @section('js')
-<!-- Aquí puedes añadir cualquier JavaScript adicional si lo necesitas -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('reservationForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita el envío por defecto del formulario
+            // Realiza el envío del formulario aquí si es necesario
+            form.reset(); // Limpia todos los campos del formulario
+            alert('Reserva enviada exitosamente y formulario limpiado.');
+        });
+    });
+</script>
+<script>
+    // Obtener la fecha actual en formato yyyy-mm-dd
+    const hoy = new Date().toISOString().split('T')[0];
+
+    // Asignar la fecha a ambos campos
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('fecha').value = hoy;
+    });
+</script>
 @endsection

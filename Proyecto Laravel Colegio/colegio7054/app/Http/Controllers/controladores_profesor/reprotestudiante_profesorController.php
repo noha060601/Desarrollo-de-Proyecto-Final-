@@ -22,7 +22,7 @@ class reprotestudiante_profesorController extends Controller
             $VistaResumenNotas1 = DB::table('VistaResumenNotas')->get();
 
             //esta es el retorno de la vista
-            return view('pagina_profesor.notas_de_profesor.reportestudiantil.reporte_de_evaluacion_estudiantil',compact('VistaResumenNotas1'));
+            return view('pagina_profesor.notas_de_profesor.reportestudiantil.reporte_de_evaluacion_estudiantil');
 
 
             // Pasamos los alumnos a la vista
