@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Colgio </b>7054',
+    'logo' => '<b>Colegio </b>7054',
     'logo_img' => 'vendor/adminlte/dist/img/insig1.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,

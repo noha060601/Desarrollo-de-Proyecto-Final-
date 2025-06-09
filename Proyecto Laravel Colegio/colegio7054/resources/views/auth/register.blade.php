@@ -60,13 +60,28 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
+{{-- Select de tipo de usuario --}}
+<div class="input-group mb-3">
+    <select name="user_type" class="form-control" required>
+        <option value="" disabled selected>Selecciona tipo de usuario</option>
+        <option value="admin">Administrador</option>
+        <option value="profesor">Profesor</option>
+        <option value="alumno">Alumno</option>
+        <option value="apoderado">Apoderado</option>
+    </select>
+    <div class="input-group-append">
+        <div class="input-group-text">
+            <span class="fas fa-users"></span>
+        </div>
+    </div>
+</div>
 
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
+{{-- Botón de registro --}}
+<button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
+    <span class="fas fa-user-plus"></span>
+    {{ __('adminlte::adminlte.register') }}
+</button>
+
                         </div>
                     </form>
                 </div>
