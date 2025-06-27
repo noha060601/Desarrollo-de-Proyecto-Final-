@@ -1,7 +1,7 @@
 <?php
 //ruta de controlador buscar la carpeta de acuerdo a la funcion
 namespace App\Http\Controllers\controladores_alumno;
-// importaciones y uso copiar y pegar
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB; //importacion para la base de datos 
@@ -19,8 +19,7 @@ class curso_alumnoController extends Controller
     public function index1()
     {
         // el nombre que se declara en la funcion es para retornar la route de la vista
-        $cursos = DB::table('Vista_Cursos_Horarios')->get();
-
+         $cursos = DB::table('vista_cursos_profesores')->get();
 
         //esta es el retorno de la vista
         return view('pagina_estudiante.capacitacion.capacitacionactual.capacitacion_actuales',compact('cursos'));

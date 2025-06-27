@@ -19,7 +19,7 @@
                 <div class="card card-widget widget-user">
                     <div class="widget-user-header" style="background-image: url('{{ asset('imagenes/fondo2.jpg') }}'); background-size: cover; background-position: center;">
                         <h3 class="widget-user-username text-white">{{ $curso->Nombre_Curso }}</h3>
-                        <h5 class="widget-user-desc text-white">Profesor: {{ $curso->Nombre_Profesor }} {{ $curso->Apellido_Profesor }}</h5>
+                        <h5 class="widget-user-desc text-white">Profesor: {{ $curso->Nombre_Profesor }} </h5>
                     </div>
                     <div class="widget-user-image">
                         <img class="img-circle elevation-2 perfil-image" src="{{ asset('imagenes/director.PNG') }}" alt="Imagen del Curso">
@@ -38,12 +38,7 @@
                                     <span class="description-text">{{ $curso->Fecha_Fin }}</span>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="description-block">
-                                    <h5 class="description-header">Duración</h5>
-                                    <span class="description-text">{{ $curso->Duracion }} hrs</span>
-                                </div>
-                            </div>
+                          
                         </div>
                         <p class="mt-3">{{ $curso->Descripcion }}</p>
                         <div class="d-flex justify-content-between">
