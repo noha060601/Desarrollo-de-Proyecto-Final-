@@ -158,6 +158,37 @@
                 <option value="apoderado">Apoderado</option>
             </select>
         </div>
+        {{-- Select de Grado (visible solo si es alumno) --}}
+        <div class="input-group mb-3 d-none" id="grupo-grado">
+           <select name="grado_id" class="form-control">
+                <option value="" disabled selected>Selecciona grado</option>
+                @foreach($grados as $grado)
+                    <option value="{{ $grado->id }}">{{ $grado->nombre }}</option>
+                @endforeach
+            </select>
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-graduation-cap"></span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Select de Sección (visible solo si es alumno) --}}
+        <div class="input-group mb-3 d-none" id="grupo-seccion">
+            <select name="seccion_id" class="form-control">
+                <option value="" disabled selected>Selecciona sección</option>
+                @foreach($secciones as $seccion)
+                    <option value="{{ $seccion->id }}">{{ $seccion->nombre }} - {{ $seccion->grado->nombre }}</option>
+                @endforeach
+            </select>
+
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-door-open"></span>
+                </div>
+            </div>
+        </div>
+
 
     {{-- Register button --}}
         <div class="text-right">
@@ -207,5 +238,32 @@
         }
     </style>
 @stop
+
+
+
+@section('js')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const userTypeSelect = document.querySelector('select[name="tipo_usuario"]');
+    const gradoDiv = document.getElementById('grupo-grado');
+    const seccionDiv = document.getElementById('grupo-seccion');
+
+    if (userTypeSelect) {
+        userTypeSelect.addEventListener('change', function () {
+            if (this.value === 'estudiante') {
+                gradoDiv.classList.remove('d-none');
+                seccionDiv.classList.remove('d-none');
+            } else {
+                gradoDiv.classList.add('d-none');
+                seccionDiv.classList.add('d-none');
+            }
+        });
+    } else {
+        console.error('No se encontró el select con name="tipo_usuario"');
+    }
+});
+</script>
+@endsection
+
 
 

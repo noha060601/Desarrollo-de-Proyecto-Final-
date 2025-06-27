@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Grado;
+use App\Models\Seccion;
 
 class RegisterController extends Controller
 {
@@ -46,14 +48,16 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-    }
+            protected function validator(array $data)
+        {
+            return Validator::make($data, [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
+                'grado_id' => ['nullable', 'exists:grados,id'],
+                'seccion_id' => ['nullable', 'exists:secciones,id'],
+            ]);
+        }
 
     /**
      * Create a new user instance after a valid registration.
@@ -61,12 +65,24 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
+            protected function create(array $data)
+        {
+            return User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'grado' => $data['grado_id'] ?? null,
+                'seccion' => $data['seccion_id'] ?? null,
+            ]);
+        }
+    
+
+    public function showRegistrationForm()
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        $grados = Grado::all();
+        $secciones = Seccion::all();
+
+        return view('auth.register', compact('grados', 'secciones'));
     }
+
 }
